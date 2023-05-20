@@ -1,8 +1,8 @@
 import getopt
-from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
 from typing import Any, NoReturn, Union
 import socket
 import sys
+from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
 from .load_wsgiapp import import_app
 
 
@@ -11,7 +11,7 @@ class WSGIServer6(WSGIServer):
 
 
 USAGE: str = """\
-Usage: {name!s:s} [-b ADDRESS | --bind ADDRESS] APPLICATION
+Usage: {name:s} [-b ADDRESS | --bind ADDRESS] APPLICATION
 
 ADDRESS:
     A string in HOST:PORT format, where HOST is a valid IP address and PORT is a
