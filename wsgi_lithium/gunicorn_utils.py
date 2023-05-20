@@ -31,6 +31,7 @@ import ast
 import importlib
 import logging
 import os
+import socket
 import sys
 import traceback
 
@@ -167,3 +168,13 @@ def parse_address(netloc, default_port='8000'):
         raise RuntimeError("%r is not a valid port number." % port)
 
     return host.lower(), port
+
+
+def is_ipv6(addr):
+    try:
+        socket.inet_pton(socket.AF_INET6, addr)
+    except socket.error:  # not a valid address
+        return False
+    except ValueError:  # ipv6 not supported on this platform
+        return False
+    return True

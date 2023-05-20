@@ -3,7 +3,7 @@ from typing import Any, NoReturn, Union
 import socket
 import sys
 from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
-from .gunicorn_utils import import_app, parse_address
+from .gunicorn_utils import import_app, parse_address, is_ipv6
 
 
 class WSGIServer6(WSGIServer):
@@ -84,5 +84,5 @@ def main():
     host, port = parse_address(bind_address)
     app = import_app(app_uri)
     with make_server(host, port, app) as httpd:
-        print("Listening on http://{:s}:{:d}/".format(host, port))
+        print("Listening on http://{:s}:{:d}/".format(("[" + host + "]") if is_ipv6(host) else host, port))
         httpd.serve_forever()
