@@ -91,4 +91,5 @@ def main():
         die_with_usage("Malformed PORT in ADDRESS")
     app = import_app(app_uri)
     with make_server(host, port, app) as httpd:
+        print("Listening on http://{:s}:{:d}/".format(host, port))
         httpd.serve_forever()
