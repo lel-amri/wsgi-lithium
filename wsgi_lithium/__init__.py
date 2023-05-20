@@ -2,12 +2,22 @@ import getopt
 from typing import Any, NoReturn, Union
 import socket
 import sys
-from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
+from wsgiref.simple_server import WSGIServer, WSGIRequestHandler as WSGIRequestHandler_
 from .gunicorn_utils import import_app, parse_address, is_ipv6
 
 
 class WSGIServer6(WSGIServer):
     address_family = socket.AF_INET6
+
+
+class WSGIRequestHandler(WSGIRequestHandler_):
+    def get_environ(self) -> None:
+        env = super().get_environ()
+        virtual_location = self.headers.get('virtual-location')
+        if virtual_location is not None:
+            env["SCRIPT_NAME"] = virtual_location
+            del env["HTTP_VIRTUAL_LOCATION"]
+        return env
 
 
 USAGE: str = """\
