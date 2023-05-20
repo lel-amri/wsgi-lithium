@@ -7,7 +7,7 @@ name = "wsgi_lithium"
 authors = [{name = "Léo El Amri", email = "leo@superlel.me"}]
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
-version = "0.1.0"
+version = "0.2.0"
 description = "An HTTP to WSGI server that relies on Python's included batteries"
 readme = "README.md"
 requires-python = ">=3.7"
