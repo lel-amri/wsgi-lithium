@@ -3,7 +3,7 @@ from typing import Any, NoReturn, Union
 import socket
 import sys
 from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
-from .load_wsgiapp import import_app
+from .gunicorn_utils import import_app, parse_address
 
 
 class WSGIServer6(WSGIServer):
@@ -81,14 +81,7 @@ def main():
             assert False, "DEAD CODE"
     if bind_address is None:
         die_with_usage()
-    parts = bind_address.rsplit(":", 1)
-    if len(parts) != 2:
-        die_with_usage("Malformed ADDRESS")
-    host, port = parts
-    try:
-        port = int(port)
-    except ValueError:
-        die_with_usage("Malformed PORT in ADDRESS")
+    host, port = parse_address(bind_address)
     app = import_app(app_uri)
     with make_server(host, port, app) as httpd:
         print("Listening on http://{:s}:{:d}/".format(host, port))
