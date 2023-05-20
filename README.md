@@ -10,4 +10,4 @@ This WSGI server is intended to be used in Kubernetes-like environments, where s
 
 ## How to use
 
-`wsgi-lithium -b 127.0.0.1:8000 module:app`
+`wsgi-lithium -b [::]:8000 module:app`
