@@ -1,8 +1,13 @@
 import getopt
-from wsgiref.simple_server import make_server
-from typing import NoReturn
+from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
+from typing import Any, NoReturn, Union
+import socket
 import sys
 from .load_wsgiapp import import_app
+
+
+class WSGIServer6(WSGIServer):
+    address_family = socket.AF_INET6
 
 
 USAGE: str = """\
@@ -27,6 +32,34 @@ def die_with_usage(msg:str=None) -> NoReturn:
         print(msg, file=sys.stderr)
     print_usage(sys.stderr)
     sys.exit(1)
+
+
+def make_server(host: str, port: int, app: Any) -> Union[WSGIServer, WSGIServer6]:
+    res = socket.getaddrinfo(
+        host,
+        port,
+        type=socket.SOCK_STREAM,
+        proto=socket.getprotobyname("tcp")
+    )
+    if any(e[0] is socket.AF_INET6 for e in res):
+        family, _, _, _, sockaddr = next(e for e in res if e[0] is socket.AF_INET6)
+    else:
+        family, _, _, _, sockaddr = res[0]
+    if family is socket.AF_INET:
+        server_class = WSGIServer
+    elif family is socket.AF_INET6:
+        server_class = WSGIServer6
+    else:
+        raise ValueError("Unsupported family: {!s:s}".format(family))
+    server = server_class(sockaddr, WSGIRequestHandler, bind_and_activate=False)
+    server.set_app(app)
+    try:
+        server.server_bind()
+        server.server_activate()
+    except:
+        server.server_close()
+        raise
+    return server
 
 
 def main():
